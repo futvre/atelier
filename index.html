@@ -1,747 +1,154 @@
 <!DOCTYPE html>
 <html lang="el">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZOE ATELIER — Handcrafted Sculptures & Eco-Resin Art</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Montserrat:wght@200;300;400;500&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-color: #0a0a0a;
-            --surface-color: #121212;
-            --card-bg: #181716;
-            --text-main: #f0ede6;
-            --text-muted: #969085;
-            --accent-gold: #c2a675;
-            --font-title: 'Cinzel', serif;
-            --font-body: 'Montserrat', sans-serif;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plaster & Form | Χειροποίητη Αρχιτεκτονική Αισθητική</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Playfair Display (Serif) & Inter (Sans) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            scroll-behavior: smooth;
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['"Playfair Display"', 'serif'],
+            sans: ['Inter', 'sans-serif'],
+          }
         }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: var(--font-body);
-            overflow-x: hidden;
-            line-height: 1.6;
-        }
-
-        /* Fixed 3D Canvas Background */
-        #webgl-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 0;
-            pointer-events: none;
-            opacity: 0.9;
-        }
-
-        /* Navigation */
-        nav {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            padding: 20px 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 100;
-            background: linear-gradient(180deg, rgba(10,10,10,0.85) 0%, rgba(10,10,10,0) 100%);
-            backdrop-filter: blur(8px);
-        }
-
-        .brand-logo {
-            font-family: var(--font-title);
-            font-size: 1.1rem;
-            letter-spacing: 0.25em;
-            text-transform: uppercase;
-            color: var(--text-main);
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .sound-btn {
-            background: rgba(10, 10, 10, 0.6);
-            border: 1px solid rgba(240, 237, 230, 0.2);
-            color: var(--text-muted);
-            padding: 6px 14px;
-            font-size: 0.65rem;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            cursor: pointer;
-            border-radius: 20px;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .sound-btn.active {
-            border-color: var(--accent-gold);
-            color: var(--accent-gold);
-        }
-
-        /* Hero Section */
-        .hero {
-            position: relative;
-            z-index: 2;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 0 20px;
-        }
-
-        .hero h1 {
-            font-family: var(--font-title);
-            font-size: clamp(2.2rem, 7vw, 5.5rem);
-            font-weight: 400;
-            letter-spacing: 0.25em;
-            text-transform: uppercase;
-            background: linear-gradient(180deg, #ffffff 0%, #a39d93 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 0.8rem;
-            text-shadow: 0 10px 30px rgba(0,0,0,0.9);
-        }
-
-        .hero p.subtitle {
-            font-size: clamp(0.7rem, 2.5vw, 0.95rem);
-            letter-spacing: 0.25em;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            margin-bottom: 2rem;
-            font-weight: 300;
-            text-shadow: 0 4px 15px rgba(0,0,0,0.9);
-        }
-
-        .scroll-indicator {
-            position: absolute;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            color: var(--text-muted);
-            font-size: 0.65rem;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            text-decoration: none;
-            opacity: 0.8;
-        }
-
-        .scroll-line {
-            width: 1px;
-            height: 30px;
-            background: linear-gradient(180deg, var(--text-muted) 0%, transparent 100%);
-        }
-
-        /* Content Sections */
-        section.content-section {
-            position: relative;
-            z-index: 2;
-            padding: 80px 6vw;
-            background-color: var(--bg-color);
-        }
-
-        .section-header {
-            margin-bottom: 40px;
-            text-align: center;
-        }
-
-        .section-title {
-            font-family: var(--font-title);
-            font-size: clamp(1.4rem, 4vw, 2.2rem);
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            font-weight: 400;
-            margin-bottom: 8px;
-            color: var(--text-main);
-        }
-
-        .section-sub {
-            font-size: 0.75rem;
-            letter-spacing: 0.2em;
-            color: var(--accent-gold);
-            text-transform: uppercase;
-        }
-
-        /* Gallery */
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
-        }
-
-        .exhibit-card {
-            background-color: var(--card-bg);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 4px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .exhibit-img-wrapper {
-            position: relative;
-            width: 100%;
-            height: 300px;
-            overflow: hidden;
-        }
-
-        .exhibit-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .exhibit-tag {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            background: rgba(10, 10, 10, 0.8);
-            padding: 4px 10px;
-            font-size: 0.65rem;
-            letter-spacing: 0.15em;
-            color: var(--accent-gold);
-        }
-
-        .exhibit-info {
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-        }
-
-        .exhibit-title {
-            font-family: var(--font-title);
-            font-size: 1.1rem;
-            letter-spacing: 0.1em;
-            margin-bottom: 8px;
-        }
-
-        .exhibit-desc {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            margin-bottom: 20px;
-            font-weight: 300;
-            flex-grow: 1;
-        }
-
-        .inquire-btn {
-            background: transparent;
-            border: 1px solid rgba(240, 237, 230, 0.2);
-            color: var(--text-main);
-            padding: 10px;
-            width: 100%;
-            font-size: 0.75rem;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .inquire-btn:hover {
-            border-color: var(--accent-gold);
-            color: var(--accent-gold);
-        }
-
-        /* Customizer */
-        .customizer-section {
-            background: #0d0d0d;
-            border-top: 1px solid rgba(255,255,255,0.05);
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .customizer-wrapper {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-            align-items: center;
-        }
-
-        @media (max-width: 800px) {
-            .customizer-wrapper { grid-template-columns: 1fr; }
-        }
-
-        .customizer-preview {
-            height: 280px;
-            background: #141414;
-            border-radius: 8px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .preview-shape {
-            width: 140px;
-            height: 160px;
-            border-radius: 40% 40% 10% 10%;
-            background: #d6cfc4;
-            box-shadow: inset -20px -20px 50px rgba(0,0,0,0.6), 0 20px 40px rgba(0,0,0,0.5);
-            transition: background 0.4s ease;
-        }
-
-        .color-options {
-            display: flex;
-            gap: 12px;
-            margin-top: 20px;
-        }
-
-        .color-dot {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            cursor: pointer;
-            border: 2px solid transparent;
-        }
-
-        .color-dot.active {
-            border-color: var(--text-main);
-            transform: scale(1.1);
-        }
-
-        /* Story */
-        .story-section {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-            align-items: center;
-        }
-
-        @media (max-width: 800px) {
-            .story-section { grid-template-columns: 1fr; }
-        }
-
-        .story-text p {
-            color: var(--text-muted);
-            margin-bottom: 15px;
-            font-weight: 300;
-            font-size: 0.85rem;
-        }
-
-        .story-img {
-            width: 100%;
-            border-radius: 4px;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        /* Modal */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(8px);
-            z-index: 1000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-
-        .modal-overlay.active {
-            opacity: 1;
-            pointer-events: all;
-        }
-
-        .modal-card {
-            background: var(--surface-color);
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 35px 25px;
-            width: 90%;
-            max-width: 450px;
-            border-radius: 4px;
-            position: relative;
-        }
-
-        .close-modal {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-
-        .modal-title {
-            font-family: var(--font-title);
-            font-size: 1.2rem;
-            letter-spacing: 0.1em;
-            margin-bottom: 8px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 0.65rem;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            margin-bottom: 6px;
-        }
-
-        .form-group input, .form-group textarea {
-            width: 100%;
-            padding: 10px;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.1);
-            color: var(--text-main);
-            font-family: var(--font-body);
-            font-size: 0.85rem;
-            outline: none;
-        }
-
-        footer {
-            position: relative;
-            z-index: 2;
-            padding: 30px;
-            text-align: center;
-            background: var(--bg-color);
-            border-top: 1px solid rgba(255,255,255,0.05);
-            font-size: 0.65rem;
-            color: var(--text-muted);
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-        }
-    </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+      }
+    }
+  </script>
 </head>
-<body>
+<body class="bg-[#fbf9f6] font-sans text-slate-800 antialiased selection:bg-[#2c2520] selection:text-[#fbf9f6]">
 
-    <!-- 3D Canvas Container -->
-    <div id="webgl-container"></div>
-
-    <!-- Nav -->
-    <nav>
-        <a href="#" class="brand-logo">ZOE ATELIER</a>
-        <button class="sound-btn" id="soundToggle">
-            <span id="soundIcon">🔊</span> <span id="soundText">SOUND</span>
-        </button>
-    </nav>
-
-    <!-- Hero Section -->
-    <section class="hero">
-        <h1>ZOE ATELIER</h1>
-        <p class="subtitle">Sculpted Light & Silent Earth</p>
-        <a href="#gallery" class="scroll-indicator">
-            <span>ΕΞΕΡΕΥΝΗΣΤΕ</span>
-            <div class="scroll-line"></div>
+  <!-- HERO SECTION -->
+  <header class="relative bg-[#f5f1ea] border-b border-[#e6dfd3] py-24 px-6 text-center">
+    <div class="max-w-4xl mx-auto space-y-6">
+      <span class="text-xs uppercase tracking-[0.25em] text-[#8c7a6b] font-semibold block">Handcrafted Plaster Art</span>
+      <h1 class="text-4xl md:text-6xl font-serif text-[#2c2520] tracking-tight leading-tight">
+        Χειροποίητη Αρχιτεκτονική Αισθητική για τον Χώρο σας
+      </h1>
+      <p class="text-lg md:text-xl text-[#65584d] max-w-2xl mx-auto leading-relaxed font-light">
+        Μοναδικά γύψινα διακοσμητικά, ανάγλυφα πάνελ τοίχου και αρχιτεκτονικές δημιουργίες, φτιαγμένα στο χέρι με προσοχή στην υφή, το φως και τη λεπτομέρεια.
+      </p>
+      <div class="pt-6">
+        <a href="#catalog" class="inline-block bg-[#2c2520] text-[#fbf9f6] px-9 py-4 text-xs uppercase tracking-widest font-medium hover:bg-[#4a3e36] transition-colors duration-300 rounded-sm">
+          Ανακαλυψτε τη Συλλογη
         </a>
-    </section>
+      </div>
+    </div>
+  </header>
 
-    <!-- Gallery Section -->
-    <section class="content-section" id="gallery">
-        <div class="section-header">
-            <p class="section-sub">COLLECTION I</p>
-            <h2 class="section-title">ΤΑ ΕΚΘΕΜΑΤΑ</h2>
-        </div>
+  <!-- VALUES / FEATURES -->
+  <section class="py-14 bg-[#fbf9f6] border-b border-[#e6dfd3]">
+    <div class="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-10 text-center">
+      <div class="space-y-2">
+        <h3 class="font-serif text-xl text-[#2c2520]">100% Χειροποίητο</h3>
+        <p class="text-sm text-[#736458] leading-relaxed">Κάθε κομμάτι χύνεται, λιμάρεται και σφραγίζεται μεμονωμένα στο χέρι.</p>
+      </div>
+      <div class="space-y-2">
+        <h3 class="font-serif text-xl text-[#2c2520]">Φυσική Ματ Υφή</h3>
+        <p class="text-sm text-[#736458] leading-relaxed">Υψηλής ποιότητας οικολογικός γύψος με απαλή, μεταξένια αίσθηση.</p>
+      </div>
+      <div class="space-y-2">
+        <h3 class="font-serif text-xl text-[#2c2520]">Custom Σχεδιασμός</h3>
+        <p class="text-sm text-[#736458] leading-relaxed">Δυνατότητα δημιουργίας ειδικών διαστάσεων και σχεδίων κατόπιν παραγγελίας.</p>
+      </div>
+    </div>
+  </section>
 
-        <div class="gallery-grid">
-            <div class="exhibit-card">
-                <div class="exhibit-img-wrapper">
-                    <span class="exhibit-tag">EXHIBIT 01</span>
-                    <img src="https://images.unsplash.com/photo-1615873968403-89e068629265?auto=format&fit=crop&w=800&q=80" alt="Plaster Vessel" class="exhibit-img">
-                </div>
-                <div class="exhibit-info">
-                    <h3 class="exhibit-title">AURA VESSEL</h3>
-                    <p class="exhibit-desc">Χειροποίητο γύψινο βάζο με απαλή ματ υφή, σχεδιασμένο για να αιχμαλωτίζει το φυσικό φως.</p>
-                    <button class="inquire-btn" onclick="openModal('AURA VESSEL')">ΕΚΔΗΛΩΣΗ ΕΝΔΙΑΦΕΡΟΝΤΟΣ</button>
-                </div>
-            </div>
-
-            <div class="exhibit-card">
-                <div class="exhibit-img-wrapper">
-                    <span class="exhibit-tag">EXHIBIT 02</span>
-                    <img src="https://images.unsplash.com/photo-1602928321679-560bb453f190?auto=format&fit=crop&w=800&q=80" alt="Resin Tray" class="exhibit-img">
-                </div>
-                <div class="exhibit-info">
-                    <h3 class="exhibit-title">TERRA DISH</h3>
-                    <p class="exhibit-desc">Δίσκος από οικολογική ρητίνη (Jesmonite) με οργανικές καμπύλες και terrazzo μοτίβο.</p>
-                    <button class="inquire-btn" onclick="openModal('TERRA DISH')">ΕΚΔΗΛΩΣΗ ΕΝΔΙΑΦΕΡΟΝΤΟΣ</button>
-                </div>
-            </div>
-
-            <div class="exhibit-card">
-                <div class="exhibit-img-wrapper">
-                    <span class="exhibit-tag">EXHIBIT 03</span>
-                    <img src="https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=800&q=80" alt="Candle Holder" class="exhibit-img">
-                </div>
-                <div class="exhibit-info">
-                    <h3 class="exhibit-title">SOLIS HOLDER</h3>
-                    <p class="exhibit-desc">Σκουλπτουραλικό κηροπήγιο από αλάβαστρο και γύψο σε μινιμαλιστική γραμμή.</p>
-                    <button class="inquire-btn" onclick="openModal('SOLIS HOLDER')">ΕΚΔΗΛΩΣΗ ΕΝΔΙΑΦΕΡΟΝΤΟΣ</button>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Customizer Section -->
-    <section class="content-section customizer-section">
-        <div class="section-header">
-            <p class="section-sub">INTERACTIVE CRAFT</p>
-            <h2 class="section-title">ΔΗΜΙΟΥΡΓΗΣΤΕ ΤΗ ΔΙΚΗ ΣΑΣ ΑΠΟΧΡΩΣΗ</h2>
-        </div>
-
-        <div class="customizer-wrapper">
-            <div class="customizer-preview">
-                <div class="preview-shape" id="customShape"></div>
-            </div>
-            <div class="customizer-controls">
-                <h3 style="font-family: var(--font-title); font-size: 1.2rem; margin-bottom: 10px;">ΕΠΙΛΟΓΗ ΦΙΝΙΡΙΣΜΑΤΟΣ</h3>
-                <p style="color: var(--text-muted); font-size: 0.8rem; font-weight: 300;">Επιλέξτε την παλέτα υφών που ταιριάζει στον δικό σας προσωπικό χώρο.</p>
-                
-                <div class="color-options">
-                    <div class="color-dot active" style="background: #d6cfc4;" onclick="changeCustomColor('#d6cfc4', 'Raw Plaster (Φυσικός Γύψος)')"></div>
-                    <div class="color-dot" style="background: #2b2927;" onclick="changeCustomColor('#2b2927', 'Charcoal Clay (Ανθρακί)')"></div>
-                    <div class="color-dot" style="background: #bfa38a;" onclick="changeCustomColor('#bfa38a', 'Terracotta Dust (Τερακότα)')"></div>
-                    <div class="color-dot" style="background: #9fa8a1;" onclick="changeCustomColor('#9fa8a1', 'Sage Stone (Φασκόμηλο)')"></div>
-                </div>
-                
-                <p id="colorLabel" style="margin-top: 15px; font-size: 0.75rem; letter-spacing: 0.15em; color: var(--accent-gold); text-transform: uppercase;">
-                    ΕΠΙΛΟΓΗ: Raw Plaster (Φυσικός Γύψος)
-                </p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Story Section -->
-    <section class="content-section">
-        <div class="story-section">
-            <div class="story-text">
-                <p class="section-sub">THE ARTISAN PROCESS</p>
-                <h2 class="section-title" style="text-align: left; margin-bottom: 15px;">Η ΤΕΧΝΗ ΤΟΥ ΧΕΙΡΟΠΟΙΗΤΟΥ</h2>
-                <p>Στο **Zoe Atelier**, ο γύψος και η οικολογική ρητίνη μεταμορφώνονται από απλή σκόνη σε διαχρονικά αντικείμενα τέχνης. Κάθε κομμάτι χύνεται, λειάνεται και σφραγίζεται με το χέρι.</p>
-                <p>Οι μικρές φυσικές φυσαλίδες και οι υφές είναι η «αναπνοή» του υλικού που πιστοποιεί την αυθεντικότητα της χειροποίητης δημιουργίας.</p>
-            </div>
-            <div>
-                <img src="https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=800&q=80" alt="Artisan at work" class="story-img">
-            </div>
-        </div>
-    </section>
-
-    <!-- Modal -->
-    <div class="modal-overlay" id="inquiryModal">
-        <div class="modal-card">
-            <button class="close-modal" onclick="closeModal()">&times;</button>
-            <h3 class="modal-title">ΕΚΔΗΛΩΣΗ ΕΝΔΙΑΦΕΡΟΝΤΟΣ</h3>
-            <p style="color: var(--text-muted); font-size: 0.75rem; margin-bottom: 20px;" id="modalObjectRef">Για το έκθεμα: Aura Vessel</p>
-
-            <form onsubmit="handleFormSubmit(event)">
-                <div class="form-group">
-                    <label>Ονοματεπώνυμο</label>
-                    <input type="text" required placeholder="π.χ. Μαρία Παπαδοπούλου">
-                </div>
-                <div class="form-group">
-                    <label>Email ή Τηλέφωνο</label>
-                    <input type="text" required placeholder="π.χ. name@example.com">
-                </div>
-                <div class="form-group">
-                    <label>Μήνυμα</label>
-                    <textarea rows="3" placeholder="Αναφέρετε τυχόν ειδικές προτιμήσεις..."></textarea>
-                </div>
-                <button type="submit" class="inquire-btn" style="background: var(--text-main); color: var(--bg-color);">ΑΠΟΣΤΟΛΗ</button>
-            </form>
-        </div>
+  <!-- CATALOG / COLLECTIONS -->
+  <section id="catalog" class="py-24 px-6 max-w-6xl mx-auto">
+    <div class="text-center mb-16 space-y-4">
+      <h2 class="text-3xl md:text-5xl font-serif text-[#2c2520]">Οι Συλλογές μας</h2>
+      <div class="w-12 h-[1px] bg-[#8c7a6b] mx-auto"></div>
+      <p class="text-[#65584d] text-sm max-w-md mx-auto font-light">
+        Διαχρονικά σχέδια εμπνευσμένα από τη λιτή γεωμετρία και τα φυσικά οργανικά σχήματα.
+      </p>
     </div>
 
-    <footer>
-        <p>&copy; 2026 ZOE ATELIER. SCULPTED WITH PASSION.</p>
-    </footer>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+      
+      <!-- CARD 1 -->
+      <div class="bg-white border border-[#eae3d9] p-8 text-center flex flex-col justify-between hover:shadow-xl transition-shadow duration-300">
+        <div class="space-y-5">
+          <div class="w-full h-56 bg-[#f5f1ea] border border-[#e6dfd3] flex items-center justify-center text-[#8c7a6b] text-sm italic font-serif">
+            [ Φωτογραφία: Ανάγλυφο Πάνελ ]
+          </div>
+          <h3 class="font-serif text-2xl text-[#2c2520]">Ανάγλυφα Πάνελ Τοίχου</h3>
+          <p class="text-sm text-[#65584d] leading-relaxed font-light">
+            Minimal relief art με οργανικές γραμμές που αλληλεπιδρούν μοναδικά με το φυσικό φως του χώρου.
+          </p>
+        </div>
+        <div class="mt-8 pt-4 border-t border-[#f0e9df]">
+          <span class="text-[11px] uppercase tracking-wider text-[#8c7a6b] font-semibold">Διαθεσιμο κατοπιν παραγγελιας</span>
+        </div>
+      </div>
 
-    <!-- Realistic 3D Sculpture Script -->
-    <script>
-        const container = document.getElementById('webgl-container');
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      <!-- CARD 2 -->
+      <div class="bg-white border border-[#eae3d9] p-8 text-center flex flex-col justify-between hover:shadow-xl transition-shadow duration-300">
+        <div class="space-y-5">
+          <div class="w-full h-56 bg-[#f5f1ea] border border-[#e6dfd3] flex items-center justify-center text-[#8c7a6b] text-sm italic font-serif">
+            [ Φωτογραφία: Δίσκοι & Βάσεις ]
+          </div>
+          <h3 class="font-serif text-2xl text-[#2c2520]">Διακοσμητικοί Δίσκοι & Βάσεις</h3>
+          <p class="text-sm text-[#65584d] leading-relaxed font-light">
+            Χειροποίητοι γύψινοι δίσκοι, κηροπήγια και οργανικές βάσεις με προστατευτικό βερνίκι αδιαβροχοποίησης.
+          </p>
+        </div>
+        <div class="mt-8 pt-4 border-t border-[#f0e9df]">
+          <span class="text-[11px] uppercase tracking-wider text-[#8c7a6b] font-semibold">Ready to Ship</span>
+        </div>
+      </div>
 
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        renderer.shadowMap.enabled = true;
-        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-        container.appendChild(renderer.domElement);
+      <!-- CARD 3 -->
+      <div class="bg-white border border-[#eae3d9] p-8 text-center flex flex-col justify-between hover:shadow-xl transition-shadow duration-300">
+        <div class="space-y-5">
+          <div class="w-full h-56 bg-[#f5f1ea] border border-[#e6dfd3] flex items-center justify-center text-[#8c7a6b] text-sm italic font-serif">
+            [ Φωτογραφία: Αρχιτεκτονικά ]
+          </div>
+          <h3 class="font-serif text-2xl text-[#2c2520]">Αρχιτεκτονικές Λεπτομέρειες</h3>
+          <p class="text-sm text-[#65584d] leading-relaxed font-light">
+            Κλασικές και μοντέρνες ροζέτες, κορνίζες και διακοσμητικά στοιχεία για οροφές και τοίχους.
+          </p>
+        </div>
+        <div class="mt-8 pt-4 border-t border-[#f0e9df]">
+          <span class="text-[11px] uppercase tracking-wider text-[#8c7a6b] font-semibold">Bespoke Orders</span>
+        </div>
+      </div>
 
-        // Group to hold the entire sculpture composition
-        const sculptureGroup = new THREE.Group();
+    </div>
+  </section>
 
-        // Realistic Plaster/Stone Material
-        const plasterMaterial = new THREE.MeshStandardMaterial({
-            color: 0xded8ce,
-            roughness: 0.85,
-            metalness: 0.05,
-            flatShading: false
-        });
+  <!-- BESPOKE / CRAFTSMANSHIP SECTION -->
+  <section class="bg-[#f0e9df] py-24 px-6 border-t border-b border-[#e2d8ca]">
+    <div class="max-w-4xl mx-auto text-center space-y-6">
+      <h2 class="text-3xl md:text-4xl font-serif text-[#2c2520]">Ειδικές Παραγγελίες &amp; Συνεργασίες</h2>
+      <p class="text-[#65584d] leading-relaxed max-w-2xl mx-auto font-light">
+        Συνεργαζόμαστε με αρχιτέκτονες, interior designers και ιδιώτες για τη δημιουργία ειδικών γύψινων κατασκευών, προσαρμοσμένων απόλυτα στις διαστάσεις και την αισθητική του έργου σας.
+      </p>
+      <div class="pt-4">
+        <a href="mailto:info@example.com" class="inline-block border border-[#2c2520] text-[#2c2520] px-9 py-4 text-xs uppercase tracking-widest font-medium hover:bg-[#2c2520] hover:text-[#fbf9f6] transition-colors duration-300">
+          Επικοινωνηστε μαζι μας
+        </a>
+      </div>
+    </div>
+  </section>
 
-        // 1. Sculptural Polyhedral Base / Vessel Body
-        const mainVesselGeo = new THREE.IcosahedronGeometry(1.6, 2);
-        const mainVessel = new THREE.Mesh(mainVesselGeo, plasterMaterial);
-        mainVessel.position.y = 0.2;
-        mainVessel.scale.set(1, 1.3, 1);
-        sculptureGroup.add(mainVessel);
+  <!-- FOOTER -->
+  <footer class="bg-[#2c2520] text-[#a89b8f] py-16 px-6 text-center text-xs tracking-wider">
+    <div class="max-w-6xl mx-auto space-y-4">
+      <p class="font-serif text-2xl text-[#fbf9f6] tracking-wide">PLASTER &amp; FORM</p>
+      <p class="font-light">© 2026 Studio Plaster &amp; Architecture. All rights reserved.</p>
+    </div>
+  </footer>
 
-        // 2. Sculptural Pedestal Ring
-        const ringGeo = new THREE.TorusGeometry(1.1, 0.2, 16, 100);
-        const ringMesh = new THREE.Mesh(ringGeo, plasterMaterial);
-        ringMesh.rotation.x = Math.PI / 2;
-        ringMesh.position.y = -1.4;
-        sculptureGroup.add(ringMesh);
-
-        // 3. Floating Architectural Spheres
-        const sphereGeo = new THREE.SphereGeometry(0.35, 32, 32);
-        const sphereMesh1 = new THREE.Mesh(sphereGeo, plasterMaterial);
-        sphereMesh1.position.set(1.4, 1.2, 0.5);
-        sculptureGroup.add(sphereMesh1);
-
-        scene.add(sculptureGroup);
-
-        // Studio Lighting Setup
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
-        scene.add(ambientLight);
-
-        // Key Warm Light
-        const keyLight = new THREE.DirectionalLight(0xfff5e6, 1.8);
-        keyLight.position.set(6, 8, 5);
-        scene.add(keyLight);
-
-        // Cool Rim Light for depth
-        const rimLight = new THREE.DirectionalLight(0x88bbff, 0.8);
-        rimLight.position.set(-6, -2, -5);
-        scene.add(rimLight);
-
-        // Responsive Camera & Scale adjustments
-        function updateCameraPosition() {
-            if (window.innerWidth < 768) {
-                camera.position.set(0, 0, 7.5);
-                sculptureGroup.scale.set(0.65, 0.65, 0.65);
-                sculptureGroup.position.y = -0.3;
-            } else {
-                camera.position.set(0, 0, 5.5);
-                sculptureGroup.scale.set(1, 1, 1);
-                sculptureGroup.position.y = 0;
-            }
-        }
-        updateCameraPosition();
-
-        // Mouse Parallax Interaction
-        let mouseX = 0, mouseY = 0;
-        document.addEventListener('mousemove', (e) => {
-            mouseX = (e.clientX / window.innerWidth - 0.5) * 0.4;
-            mouseY = (e.clientY / window.innerHeight - 0.5) * 0.4;
-        });
-
-        // Animation Loop
-        function animate() {
-            requestAnimationFrame(animate);
-
-            // Gentle rotation
-            sculptureGroup.rotation.y += 0.003;
-            
-            // Subtle floating effect
-            sculptureGroup.position.y += Math.sin(Date.now() * 0.0015) * 0.001;
-
-            // Mouse movement smoothing
-            sculptureGroup.rotation.y += (mouseX - sculptureGroup.rotation.y) * 0.02;
-            sculptureGroup.rotation.x += (mouseY - sculptureGroup.rotation.x) * 0.02;
-
-            renderer.render(scene, camera);
-        }
-        animate();
-
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            updateCameraPosition();
-        });
-
-        // Ambient Sound Controls
-        let audioCtx = null;
-        let isPlaying = false;
-        let noiseNode = null;
-
-        document.getElementById('soundToggle').addEventListener('click', () => {
-            if (!isPlaying) {
-                startSoundscape();
-                document.getElementById('soundToggle').classList.add('active');
-                document.getElementById('soundText').innerText = 'ON';
-                isPlaying = true;
-            } else {
-                stopSoundscape();
-                document.getElementById('soundToggle').classList.remove('active');
-                document.getElementById('soundText').innerText = 'SOUND';
-                isPlaying = false;
-            }
-        });
-
-        function startSoundscape() {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            const bufferSize = audioCtx.sampleRate * 2;
-            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-            const data = buffer.getChannelData(0);
-
-            for (let i = 0; i < bufferSize; i++) {
-                data[i] = (Math.random() * 2 - 1) * 0.01;
-            }
-
-            noiseNode = audioCtx.createBufferSource();
-            noiseNode.buffer = buffer;
-            noiseNode.loop = true;
-            noiseNode.connect(audioCtx.destination);
-            noiseNode.start();
-        }
-
-        function stopSoundscape() {
-            if (noiseNode) noiseNode.stop();
-            if (audioCtx) audioCtx.close();
-        }
-
-        function changeCustomColor(colorHex, name) {
-            document.getElementById('customShape').style.background = colorHex;
-            document.getElementById('colorLabel').innerText = 'ΕΠΙΛΟΓΗ: ' + name;
-            
-            document.querySelectorAll('.color-dot').forEach(dot => dot.classList.remove('active'));
-            event.target.classList.add('active');
-        }
-
-        function openModal(objectName) {
-            document.getElementById('modalObjectRef').innerText = 'Για το έκθεμα: ' + objectName;
-            document.getElementById('inquiryModal').classList.add('active');
-        }
-
-        function closeModal() {
-            document.getElementById('inquiryModal').classList.remove('active');
-        }
-
-        function handleFormSubmit(e) {
-            e.preventDefault();
-            alert('Σας ευχαριστούμε! Το αίτημά σας καταγράφηκε.');
-            closeModal();
-        }
-    </script>
 </body>
 </html>
