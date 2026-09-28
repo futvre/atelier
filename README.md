@@ -1,22 +1,12 @@
-# ZOE ATELIER
+# ZOE ATELIER — in-site order form
 
-Next.js + Tailwind storefront prototype for Vercel.
+Checkout does not open the customer's email app. The customer fills the form and presses Submit.
+The server sends two emails through Resend: one to the shop owner and one confirmation to the customer.
+Repeated items are grouped automatically (for example, Arc Candle × 3).
 
-## Checkout
-This version intentionally does NOT use Stripe.
-Customers fill in the checkout form and the site creates a pre-filled order email containing:
-- Customer name
-- Phone
-- Email
-- BOX NOW locker / area
-- Products and quantities
-- Total
-- Notes
+## Vercel Environment Variables
+- RESEND_API_KEY
+- ORDER_EMAIL
+- RESEND_FROM_EMAIL (must be a verified sender/domain in Resend)
 
-Set the Vercel environment variable:
-`NEXT_PUBLIC_ORDER_EMAIL=your@email.com`
-
-The customer's email client opens with the order ready to send.
-
-## Deploy
-Push the repository to GitHub and import it into Vercel. Keep the framework as Next.js.
+Redeploy after adding/changing environment variables.
