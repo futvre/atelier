@@ -1,0 +1,12 @@
+@import "tailwindcss";
+:root{--paper:#f5f1ea;--ink:#292722;--muted:#746f66}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:Arial,Helvetica,sans-serif}
+::selection{background:#cfc1b1;color:#292722}
+.float{animation:float 7s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-12px) rotate(2deg)}}
+.marquee{animation:marquee 22s linear infinite}
+@keyframes marquee{to{transform:translateX(-50%)}}
+.product-image{transition:transform .7s cubic-bezier(.2,.7,.2,1)}
+.product-card:hover .product-image{transform:scale(1.035)}
+.soft-shadow{box-shadow:0 25px 70px rgba(55,45,35,.09)}
