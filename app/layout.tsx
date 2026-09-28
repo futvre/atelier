@@ -6,6 +6,6 @@ export const metadata: Metadata = {
   description: "Sculptural plaster decor and future 3D printed objects."
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({children}:{children:React.ReactNode}) {
   return <html lang="el"><body>{children}</body></html>;
 }
