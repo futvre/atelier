@@ -24,7 +24,7 @@ type Customer = {
   notes: string;
 };
 
-function ProductVisual({
+function ProductImage({
   product,
   className = "",
 }: {
@@ -38,7 +38,7 @@ function ProductVisual({
         alt={product.name}
         fill
         sizes="(max-width: 768px) 50vw, 25vw"
-        className="object-cover"
+        className="object-cover transition duration-700 group-hover:scale-105"
       />
     </div>
   );
@@ -60,18 +60,18 @@ function CategoryImage({
         sizes="(max-width: 768px) 100vw, 50vw"
         className="object-cover transition duration-700 group-hover:scale-105"
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/5 to-transparent" />
     </div>
   );
 }
 
 export default function Home() {
-  const [menu, setMenu] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [cart, setCart] = useState<number[]>([]);
-  const [category, setCategory] = useState("Όλα");
-  const [quick, setQuick] = useState<Product | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState("Όλα");
+  const [quickProduct, setQuickProduct] = useState<Product | null>(null);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
-  const [sentOrder, setSentOrder] = useState<string | null>(null);
+  const [successOrder, setSuccessOrder] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
 
@@ -85,33 +85,25 @@ export default function Home() {
   });
 
   const filteredProducts =
-    category === "Όλα"
+    selectedCategory === "Όλα"
       ? products
-      : products.filter((product) => product.category === category);
+      : products.filter((product) => product.category === selectedCategory);
 
   const groupedCart = useMemo(() => {
-    const map = new Map<
-      number,
-      {
-        product: Product;
-        quantity: number;
-      }
-    >();
+    const map = new Map<number, { product: Product; quantity: number }>();
 
     for (const id of cart) {
       const product = products.find((item) => item.id === id);
-
       if (!product) continue;
 
-      const current = map.get(product.id);
-
+      const existing = map.get(product.id);
       map.set(product.id, {
         product,
-        quantity: (current?.quantity ?? 0) + 1,
+        quantity: (existing?.quantity ?? 0) + 1,
       });
     }
 
-    return Array.from(map.values());
+    return [...map.values()];
   }, [cart]);
 
   const total = groupedCart.reduce(
@@ -121,7 +113,11 @@ export default function Home() {
 
   const cartCount = cart.length;
 
-  const updateQty = (id: number, delta: number) => {
+  function addToCart(id: number) {
+    setCart((current) => [...current, id]);
+  }
+
+  function updateQty(id: number, delta: number) {
     setCart((current) => {
       const next = [...current];
 
@@ -131,35 +127,30 @@ export default function Home() {
       }
 
       const index = next.lastIndexOf(id);
-
-      if (index !== -1) {
-        next.splice(index, 1);
-      }
+      if (index !== -1) next.splice(index, 1);
 
       return next;
     });
-  };
+  }
 
-  const openCart = () => {
+  function openCart() {
     document.getElementById("cart")?.classList.remove("hidden");
-  };
+  }
 
-  const closeCart = () => {
+  function closeCart() {
     document.getElementById("cart")?.classList.add("hidden");
-  };
+  }
 
-  const openCheckout = () => {
+  function openCheckout() {
     setError("");
     setCheckoutOpen(true);
-  };
+  }
 
-  const closeCheckout = () => {
-    if (!sending) {
-      setCheckoutOpen(false);
-    }
-  };
+  function closeCheckout() {
+    if (!sending) setCheckoutOpen(false);
+  }
 
-  const submitOrder = async (event: React.FormEvent<HTMLFormElement>) => {
+  async function submitOrder(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
 
@@ -173,9 +164,7 @@ export default function Home() {
     try {
       const response = await fetch("/api/order", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           customer,
           items: groupedCart.map(({ product, quantity }) => ({
@@ -190,16 +179,13 @@ export default function Home() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(
-          data?.error || "Δεν μπορέσαμε να στείλουμε την παραγγελία."
-        );
+        throw new Error(data?.error || "Δεν μπορέσαμε να στείλουμε την παραγγελία.");
       }
 
       setCart([]);
       setCheckoutOpen(false);
       closeCart();
-      setSentOrder(data.orderId);
-
+      setSuccessOrder(data.orderId);
       setCustomer({
         name: "",
         phone: "",
@@ -217,19 +203,18 @@ export default function Home() {
     } finally {
       setSending(false);
     }
-  };
+  }
 
   return (
     <main className="min-h-screen overflow-x-hidden bg-[#f5f1ea] text-[#292722]">
-      {/* HEADER */}
       <header className="fixed left-0 right-0 top-0 z-50 border-b border-white/30 bg-[#f5f1ea]/80 backdrop-blur-xl">
         <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-5 md:px-8">
           <button
             className="md:hidden"
-            onClick={() => setMenu((value) => !value)}
+            onClick={() => setMenuOpen((value) => !value)}
             aria-label="Menu"
           >
-            {menu ? <X size={22} /> : <Menu size={22} />}
+            {menuOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
 
           <a
@@ -240,27 +225,14 @@ export default function Home() {
           </a>
 
           <nav className="hidden gap-8 text-[11px] uppercase tracking-[.18em] md:flex">
-            <a href="#shop" className="transition hover:opacity-50">
-              Shop
-            </a>
-            <a href="#collections" className="transition hover:opacity-50">
-              Collections
-            </a>
-            <a href="#story" className="transition hover:opacity-50">
-              Our story
-            </a>
-            <a href="#future" className="transition hover:opacity-50">
-              3D studio
-            </a>
+            <a href="#shop" className="transition hover:opacity-50">Shop</a>
+            <a href="#collections" className="transition hover:opacity-50">Collections</a>
+            <a href="#story" className="transition hover:opacity-50">Our story</a>
+            <a href="#future" className="transition hover:opacity-50">3D studio</a>
           </nav>
 
-          <button
-            onClick={openCart}
-            className="relative"
-            aria-label="Shopping bag"
-          >
+          <button onClick={openCart} className="relative" aria-label="Shopping bag">
             <ShoppingBag size={19} />
-
             {cartCount > 0 && (
               <span className="absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#292722] px-1 text-[9px] text-white">
                 {cartCount}
@@ -269,27 +241,18 @@ export default function Home() {
           </button>
         </div>
 
-        {menu && (
+        {menuOpen && (
           <div className="border-t border-black/10 bg-[#f5f1ea] px-6 py-6 md:hidden">
             <div className="grid gap-5 text-sm">
-              <a onClick={() => setMenu(false)} href="#shop">
-                Shop
-              </a>
-              <a onClick={() => setMenu(false)} href="#collections">
-                Collections
-              </a>
-              <a onClick={() => setMenu(false)} href="#story">
-                Our story
-              </a>
-              <a onClick={() => setMenu(false)} href="#future">
-                3D studio
-              </a>
+              <a onClick={() => setMenuOpen(false)} href="#shop">Shop</a>
+              <a onClick={() => setMenuOpen(false)} href="#collections">Collections</a>
+              <a onClick={() => setMenuOpen(false)} href="#story">Our story</a>
+              <a onClick={() => setMenuOpen(false)} href="#future">3D studio</a>
             </div>
           </div>
         )}
       </header>
 
-      {/* HERO */}
       <section className="relative flex min-h-[92vh] items-end overflow-hidden px-5 pb-12 pt-28 md:min-h-screen md:px-10 md:pb-16">
         <Image
           src="/products/hero.jfif"
@@ -299,25 +262,20 @@ export default function Home() {
           sizes="100vw"
           className="object-cover"
         />
-
         <div className="absolute inset-0 bg-black/25" />
 
         <div className="relative z-10 max-w-2xl text-white">
           <p className="mb-5 text-[10px] uppercase tracking-[.45em]">
             Sculptural objects · Made slowly
           </p>
-
           <h1 className="text-5xl font-light leading-[.94] tracking-[-.04em] md:text-8xl">
             Objects with
             <br />
             <i className="font-serif">a soul.</i>
           </h1>
-
           <p className="mt-7 max-w-md text-sm leading-6 text-white/85 md:text-base">
-            Χειροποίητα γύψινα διακοσμητικά για χώρους που θέλουν να νιώθουν
-            διαφορετικοί.
+            Χειροποίητα γύψινα διακοσμητικά για χώρους που θέλουν να νιώθουν διαφορετικοί.
           </p>
-
           <a
             href="#shop"
             className="mt-8 inline-flex items-center gap-4 rounded-full bg-white px-6 py-3 text-xs text-[#292722] transition hover:scale-105"
@@ -331,40 +289,27 @@ export default function Home() {
           href="#shop"
           className="absolute bottom-7 right-7 z-10 hidden items-center gap-2 text-[9px] uppercase tracking-[.25em] text-white/80 md:flex"
         >
-          Scroll
-          <ArrowDown size={13} />
+          Scroll <ArrowDown size={13} />
         </a>
       </section>
 
-      {/* MARQUEE */}
       <div className="overflow-hidden border-b border-t border-black/10 py-4">
         <div className="marquee flex w-max gap-12 text-[10px] uppercase tracking-[.32em] text-[#746f66]">
-          {Array.from({ length: 2 }).flatMap((_, index) =>
+          {Array.from({ length: 2 }).flatMap((_, i) =>
             [
               "Handmade in Greece",
               "Small batches",
               "Designed to last",
               "Objects with a soul",
-            ].map((text, itemIndex) => (
-              <span key={`${index}-${itemIndex}`}>{text} ✦</span>
-            ))
+            ].map((text, j) => <span key={`${i}-${j}`}>{text} ✦</span>)
           )}
         </div>
       </div>
 
-      {/* COLLECTIONS */}
-      <section
-        id="collections"
-        className="mx-auto max-w-7xl px-5 py-20 md:px-8 md:py-28"
-      >
+      <section id="collections" className="mx-auto max-w-7xl px-5 py-20 md:px-8 md:py-28">
         <div className="mb-10">
-          <p className="mb-3 text-[10px] uppercase tracking-[.35em] text-[#8a8177]">
-            Collections
-          </p>
-
-          <h2 className="text-4xl font-light tracking-[-.03em] md:text-6xl">
-            Find your form.
-          </h2>
+          <p className="mb-3 text-[10px] uppercase tracking-[.35em] text-[#8a8177]">Collections</p>
+          <h2 className="text-4xl font-light tracking-[-.03em] md:text-6xl">Find your form.</h2>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">
@@ -372,26 +317,18 @@ export default function Home() {
             <button
               key={item.name}
               onClick={() => {
-                setCategory(item.name);
-                document
-                  .getElementById("shop")
-                  ?.scrollIntoView({ behavior: "smooth" });
+                setSelectedCategory(item.name);
+                document.getElementById("shop")?.scrollIntoView({ behavior: "smooth" });
               }}
               className="group relative aspect-[16/10] overflow-hidden rounded-[28px] text-left"
             >
               <CategoryImage image={item.image} name={item.name} />
-
               <div className="absolute inset-x-0 bottom-0 z-10 p-6 text-white md:p-8">
                 <div className="flex items-end justify-between gap-4">
                   <div>
-                    <p className="text-2xl font-light md:text-4xl">
-                      {item.name}
-                    </p>
-                    <p className="mt-1 text-xs tracking-[.12em] text-white/75">
-                      {item.subtitle}
-                    </p>
+                    <p className="text-2xl font-light md:text-4xl">{item.name}</p>
+                    <p className="mt-1 text-xs tracking-[.12em] text-white/75">{item.subtitle}</p>
                   </div>
-
                   <ArrowRight size={20} />
                 </div>
               </div>
@@ -400,29 +337,23 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SHOP */}
-      <section
-        id="shop"
-        className="mx-auto max-w-7xl px-5 pb-20 md:px-8 md:pb-28"
-      >
+      <section id="shop" className="mx-auto max-w-7xl px-5 pb-20 md:px-8 md:pb-28">
         <div className="mb-10 flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <div>
-            <p className="mb-3 text-[10px] uppercase tracking-[.35em] text-[#8a8177]">
-              The collection
-            </p>
-
-            <h2 className="text-4xl font-light tracking-[-.03em] md:text-6xl">
-              Made for your space.
-            </h2>
+            <p className="mb-3 text-[10px] uppercase tracking-[.35em] text-[#8a8177]">The collection</p>
+            <h2 className="text-4xl font-light tracking-[-.03em] md:text-6xl">Made for your space.</h2>
           </div>
 
           <div className="flex gap-2 overflow-x-auto pb-1 text-xs">
-            {["Όλα", ...categories.map((item) => item.name)].map((item) => (
+            {[
+              "Όλα",
+              ...categories.map((item) => item.name),
+            ].map((item) => (
               <button
                 key={item}
-                onClick={() => setCategory(item)}
+                onClick={() => setSelectedCategory(item)}
                 className={`whitespace-nowrap rounded-full border px-4 py-2 transition ${
-                  category === item
+                  selectedCategory === item
                     ? "bg-[#292722] text-white"
                     : "border-black/15 hover:bg-black/5"
                 }`}
@@ -437,22 +368,22 @@ export default function Home() {
           {filteredProducts.map((product) => (
             <article
               key={product.id}
-              className="product-card cursor-pointer"
-              onClick={() => setQuick(product)}
+              className="group cursor-pointer"
+              onClick={() => setQuickProduct(product)}
             >
-              <div className="product-image relative aspect-[4/5] overflow-hidden rounded-[22px] bg-[#e8e0d6]">
+              <div className="relative aspect-[4/5] overflow-hidden rounded-[22px] bg-[#e8e0d6]">
                 <Image
                   src={product.image}
                   alt={product.name}
                   fill
                   sizes="(max-width: 768px) 50vw, 25vw"
-                  className="object-cover"
+                  className="object-cover transition duration-700 group-hover:scale-105"
                 />
 
                 <button
                   onClick={(event) => {
                     event.stopPropagation();
-                    updateQty(product.id, 1);
+                    addToCart(product.id);
                   }}
                   aria-label={`Add ${product.name}`}
                   className="absolute bottom-3 right-3 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 shadow-sm transition hover:scale-105"
@@ -464,12 +395,8 @@ export default function Home() {
               <div className="mt-3 flex items-start justify-between gap-2">
                 <div>
                   <h3 className="text-sm">{product.name}</h3>
-
-                  <p className="mt-1 text-xs text-[#8a8177]">
-                    {product.category}
-                  </p>
+                  <p className="mt-1 text-xs text-[#8a8177]">{product.category}</p>
                 </div>
-
                 <span className="text-sm">{product.price}€</span>
               </div>
             </article>
@@ -477,11 +404,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* STORY */}
-      <section
-        id="story"
-        className="bg-[#e8ded2] px-5 py-24 md:px-10 md:py-36"
-      >
+      <section id="story" className="bg-[#e8ded2] px-5 py-24 md:px-10 md:py-36">
         <div className="mx-auto grid max-w-7xl items-center gap-16 md:grid-cols-2">
           <div className="relative mx-auto aspect-square w-full max-w-[520px] overflow-hidden rounded-[38px] bg-[#cbb9a6] soft-shadow">
             <Image
@@ -494,100 +417,71 @@ export default function Home() {
           </div>
 
           <div className="max-w-xl">
-            <p className="mb-5 text-[10px] uppercase tracking-[.35em] text-[#766b60]">
-              The atelier
-            </p>
-
+            <p className="mb-5 text-[10px] uppercase tracking-[.35em] text-[#766b60]">The atelier</p>
             <h2 className="text-4xl font-light leading-tight tracking-[-.03em] md:text-6xl">
               Quiet objects.
               <br />
               <i className="font-serif">Strong presence.</i>
             </h2>
-
             <p className="mt-7 text-sm leading-7 text-[#61594f] md:text-base">
-              Το ZOE ATELIER γεννήθηκε από την αγάπη για τις απλές φόρμες,
-              τις φυσικές υφές και τα αντικείμενα που δεν χρειάζονται φωνή για
-              να τραβήξουν την προσοχή.
+              Το ZOE ATELIER γεννήθηκε από την αγάπη για τις απλές φόρμες, τις φυσικές υφές και τα αντικείμενα που δεν χρειάζονται φωνή για να τραβήξουν την προσοχή.
             </p>
-
             <p className="mt-4 text-sm leading-7 text-[#61594f] md:text-base">
-              Κάθε κομμάτι παράγεται σε μικρές ποσότητες και έχει μικρές
-              διαφορές που το κάνουν δικό του.
+              Κάθε κομμάτι παράγεται σε μικρές ποσότητες και έχει μικρές διαφορές που το κάνουν δικό του.
             </p>
-
-            <a
-              href="#shop"
-              className="mt-8 inline-flex items-center gap-3 border-b border-black/40 pb-2 text-xs uppercase tracking-[.18em]"
-            >
-              Δες τη συλλογή
-              <ArrowRight size={14} />
+            <a href="#shop" className="mt-8 inline-flex items-center gap-3 border-b border-black/40 pb-2 text-xs uppercase tracking-[.18em]">
+              Δες τη συλλογή <ArrowRight size={14} />
             </a>
           </div>
         </div>
       </section>
 
-      {/* 3D */}
-      <section
-        id="future"
-        className="relative overflow-hidden bg-[#292722] px-5 py-24 text-[#f5f1ea] md:px-10 md:py-36"
-      >
+      <section id="future" className="relative overflow-hidden bg-[#292722] px-5 py-24 text-[#f5f1ea] md:px-10 md:py-36">
         <div className="absolute -right-20 -top-20 h-80 w-80 rounded-full bg-[#756452] opacity-30 blur-3xl" />
-
         <div className="relative mx-auto max-w-7xl">
-          <p className="mb-5 text-[10px] uppercase tracking-[.35em] text-[#b9aa99]">
-            Coming next
-          </p>
-
+          <p className="mb-5 text-[10px] uppercase tracking-[.35em] text-[#b9aa99]">Coming next</p>
           <h2 className="text-5xl font-light tracking-[-.04em] md:text-8xl">
             Made layer
             <br />
             <i className="font-serif">by layer.</i>
           </h2>
-
           <p className="mt-7 max-w-xl text-sm leading-7 text-white/60 md:text-base">
-            Σύντομα: 3D printed objects, custom designs και δημιουργίες που
-            ξεκινούν από μια ιδέα και καταλήγουν στα χέρια σου.
+            Σύντομα: 3D printed objects, custom designs και δημιουργίες που ξεκινούν από μια ιδέα και καταλήγουν στα χέρια σου.
           </p>
         </div>
       </section>
 
-      {/* FOOTER */}
       <footer className="px-5 py-12">
         <div className="mx-auto flex max-w-7xl flex-col justify-between gap-8 border-t border-black/10 pt-8 md:flex-row">
           <div>
             <div className="text-sm tracking-[.25em]">ZOE ATELIER</div>
-            <p className="mt-2 text-xs text-[#8a8177]">
-              Objects with a soul.
-            </p>
+            <p className="mt-2 text-xs text-[#8a8177]">Objects with a soul.</p>
           </div>
-
-          <div className="text-xs text-[#746f66]">
-            Instagram · Contact · © 2026
-          </div>
+          <div className="text-xs text-[#746f66]">Instagram · Contact · © 2026</div>
         </div>
       </footer>
 
-      {/* QUICK VIEW */}
-      {quick && (
+      {quickProduct && (
         <div
           className="fixed inset-0 z-[60] flex items-end justify-center bg-black/30 p-0 backdrop-blur-sm md:items-center md:p-6"
-          onClick={() => setQuick(null)}
+          onClick={() => setQuickProduct(null)}
         >
           <div
             onClick={(event) => event.stopPropagation()}
             className="relative grid w-full max-w-4xl overflow-hidden rounded-t-[28px] bg-[#f5f1ea] md:grid-cols-2 md:rounded-[28px]"
           >
             <button
-              onClick={() => setQuick(null)}
+              onClick={() => setQuickProduct(null)}
               className="absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/85"
+              aria-label="Close product"
             >
               <X size={17} />
             </button>
 
             <div className="relative aspect-square bg-[#e8e0d6]">
               <Image
-                src={quick.image}
-                alt={quick.name}
+                src={quickProduct.image}
+                alt={quickProduct.name}
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
                 className="object-cover"
@@ -596,22 +490,19 @@ export default function Home() {
 
             <div className="flex flex-col justify-center p-7 md:p-12">
               <p className="text-[10px] uppercase tracking-[.3em] text-[#8a8177]">
-                {quick.category}
+                {quickProduct.category}
               </p>
-
-              <h3 className="mt-3 text-4xl font-light">{quick.name}</h3>
-
+              <h3 className="mt-3 text-4xl font-light">{quickProduct.name}</h3>
               <p className="mt-5 text-sm leading-6 text-[#746f66]">
-                {quick.description}
+                {quickProduct.description}
               </p>
 
               <div className="mt-8 flex items-center justify-between gap-4">
-                <span className="text-xl">{quick.price}€</span>
-
+                <span className="text-xl">{quickProduct.price}€</span>
                 <button
                   onClick={() => {
-                    updateQty(quick.id, 1);
-                    setQuick(null);
+                    addToCart(quickProduct.id);
+                    setQuickProduct(null);
                   }}
                   className="rounded-full bg-[#292722] px-6 py-3 text-xs text-white"
                 >
@@ -623,28 +514,21 @@ export default function Home() {
         </div>
       )}
 
-      {/* SUCCESS */}
-      {sentOrder && (
+      {successOrder && (
         <div className="fixed inset-0 z-[80] flex items-center justify-center bg-black/30 p-5 backdrop-blur-sm">
           <div className="w-full max-w-md rounded-[28px] bg-[#f5f1ea] p-8 text-center shadow-2xl">
             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#292722] text-white">
               <Check size={22} />
             </div>
-
-            <p className="mt-6 text-[10px] uppercase tracking-[.3em] text-[#8a8177]">
-              Order received
-            </p>
-
+            <p className="mt-6 text-[10px] uppercase tracking-[.3em] text-[#8a8177]">Order received</p>
             <h3 className="mt-3 text-3xl font-light">Ευχαριστούμε.</h3>
-
             <p className="mt-4 text-sm leading-6 text-[#746f66]">
-              Η παραγγελία σου <strong>{sentOrder}</strong> καταχωρήθηκε.
+              Η παραγγελία σου <strong>{successOrder}</strong> καταχωρήθηκε.
               <br />
               Σου στείλαμε επιβεβαίωση στο email που δήλωσες.
             </p>
-
             <button
-              onClick={() => setSentOrder(null)}
+              onClick={() => setSuccessOrder(null)}
               className="mt-7 rounded-full bg-[#292722] px-7 py-3 text-xs text-white"
             >
               Επιστροφή στο κατάστημα
@@ -653,23 +537,17 @@ export default function Home() {
         </div>
       )}
 
-      {/* CART */}
       <div
         id="cart"
         className="fixed inset-0 z-[70] hidden bg-black/30"
         onClick={(event) => {
-          if (event.target === event.currentTarget) {
-            closeCart();
-          }
+          if (event.target === event.currentTarget) closeCart();
         }}
       >
         <aside className="absolute right-0 top-0 h-full w-full max-w-md overflow-y-auto bg-[#f5f1ea] p-6 shadow-2xl">
           <div className="flex items-center justify-between">
             <h3 className="text-xl font-light">Your bag</h3>
-
-            <button onClick={closeCart} aria-label="Close cart">
-              <X />
-            </button>
+            <button onClick={closeCart} aria-label="Close cart"><X /></button>
           </div>
 
           {groupedCart.length === 0 ? (
@@ -680,23 +558,13 @@ export default function Home() {
             <>
               <div className="mt-8 space-y-4">
                 {groupedCart.map(({ product, quantity }) => (
-                  <div
-                    key={product.id}
-                    className="flex items-center gap-4 border-b border-black/10 pb-4"
-                  >
+                  <div key={product.id} className="flex items-center gap-4 border-b border-black/10 pb-4">
                     <div className="relative h-20 w-16 overflow-hidden rounded-xl bg-[#e8e0d6]">
-                      <Image
-                        src={product.image}
-                        alt={product.name}
-                        fill
-                        sizes="64px"
-                        className="object-cover"
-                      />
+                      <Image src={product.image} alt={product.name} fill sizes="64px" className="object-cover" />
                     </div>
 
                     <div className="flex-1">
                       <div className="text-sm">{product.name}</div>
-
                       <div className="mt-1 text-xs text-[#8a8177]">
                         {product.price}€ · × {quantity}
                       </div>
@@ -710,11 +578,7 @@ export default function Home() {
                       >
                         <Minus size={14} />
                       </button>
-
-                      <span className="w-5 text-center text-sm">
-                        {quantity}
-                      </span>
-
+                      <span className="w-5 text-center text-sm">{quantity}</span>
                       <button
                         onClick={() => updateQty(product.id, 1)}
                         className="flex h-8 w-8 items-center justify-center rounded-full border border-black/10"
@@ -732,12 +596,10 @@ export default function Home() {
                   <span>Προϊόντα</span>
                   <strong>{total.toFixed(2)}€</strong>
                 </div>
-
                 <div className="mt-2 flex items-center justify-between text-sm">
                   <span>Αποστολή</span>
                   <span className="text-[#746f66]">BOX NOW</span>
                 </div>
-
                 <p className="mt-3 text-xs leading-5 text-[#8a8177]">
                   Τα μεταφορικά επιβεβαιώνονται μαζί με την παραγγελία.
                 </p>
@@ -754,14 +616,11 @@ export default function Home() {
         </aside>
       </div>
 
-      {/* CHECKOUT */}
       {checkoutOpen && (
         <div
           className="fixed inset-0 z-[75] flex items-end justify-center bg-black/30 p-0 backdrop-blur-sm md:items-center md:p-6"
           onClick={(event) => {
-            if (event.target === event.currentTarget) {
-              closeCheckout();
-            }
+            if (event.target === event.currentTarget) closeCheckout();
           }}
         >
           <div className="relative max-h-[92vh] w-full max-w-4xl overflow-y-auto rounded-t-[28px] bg-[#f5f1ea] md:rounded-[28px]">
@@ -776,140 +635,80 @@ export default function Home() {
 
             <div className="grid md:grid-cols-[1.05fr_.95fr]">
               <div className="p-7 md:p-10">
-                <p className="text-[10px] uppercase tracking-[.3em] text-[#8a8177]">
-                  Checkout
-                </p>
-
-                <h3 className="mt-3 text-4xl font-light">
-                  Η παραγγελία σου.
-                </h3>
-
+                <p className="text-[10px] uppercase tracking-[.3em] text-[#8a8177]">Checkout</p>
+                <h3 className="mt-3 text-4xl font-light">Η παραγγελία σου.</h3>
                 <p className="mt-3 text-sm leading-6 text-[#746f66]">
                   Συμπλήρωσε τα στοιχεία σου και πάτησε αποστολή.
                 </p>
 
-                <form
-                  onSubmit={submitOrder}
-                  className="mt-8 space-y-4"
-                >
+                <form onSubmit={submitOrder} className="mt-8 space-y-4">
                   <div>
-                    <label className="mb-2 block text-xs">
-                      Ονοματεπώνυμο *
-                    </label>
-
+                    <label className="mb-2 block text-xs">Ονοματεπώνυμο *</label>
                     <input
                       className="input-field"
                       required
                       value={customer.name}
-                      onChange={(event) =>
-                        setCustomer({
-                          ...customer,
-                          name: event.target.value,
-                        })
-                      }
+                      onChange={(event) => setCustomer({ ...customer, name: event.target.value })}
                       placeholder="π.χ. Μαρία Παπαδοπούλου"
                     />
                   </div>
 
                   <div className="grid gap-4 md:grid-cols-2">
                     <div>
-                      <label className="mb-2 block text-xs">
-                        Τηλέφωνο *
-                      </label>
-
+                      <label className="mb-2 block text-xs">Τηλέφωνο *</label>
                       <input
                         className="input-field"
                         type="tel"
                         required
                         value={customer.phone}
-                        onChange={(event) =>
-                          setCustomer({
-                            ...customer,
-                            phone: event.target.value,
-                          })
-                        }
+                        onChange={(event) => setCustomer({ ...customer, phone: event.target.value })}
                         placeholder="69..."
                       />
                     </div>
-
                     <div>
-                      <label className="mb-2 block text-xs">
-                        Email *
-                      </label>
-
+                      <label className="mb-2 block text-xs">Email *</label>
                       <input
                         className="input-field"
                         type="email"
                         required
                         value={customer.email}
-                        onChange={(event) =>
-                          setCustomer({
-                            ...customer,
-                            email: event.target.value,
-                          })
-                        }
+                        onChange={(event) => setCustomer({ ...customer, email: event.target.value })}
                         placeholder="email@example.com"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="mb-2 block text-xs">
-                      Περιοχή / Πόλη *
-                    </label>
-
+                    <label className="mb-2 block text-xs">Περιοχή / Πόλη *</label>
                     <input
                       className="input-field"
                       required
                       value={customer.area}
-                      onChange={(event) =>
-                        setCustomer({
-                          ...customer,
-                          area: event.target.value,
-                        })
-                      }
+                      onChange={(event) => setCustomer({ ...customer, area: event.target.value })}
                       placeholder="π.χ. Θεσσαλονίκη"
                     />
                   </div>
 
                   <div>
-                    <label className="mb-2 block text-xs">
-                      BOX NOW Locker *
-                    </label>
-
+                    <label className="mb-2 block text-xs">BOX NOW Locker *</label>
                     <input
                       className="input-field"
                       required
                       value={customer.locker}
-                      onChange={(event) =>
-                        setCustomer({
-                          ...customer,
-                          locker: event.target.value,
-                        })
-                      }
+                      onChange={(event) => setCustomer({ ...customer, locker: event.target.value })}
                       placeholder="Όνομα ή κωδικός locker"
                     />
-
                     <p className="mt-2 text-xs leading-5 text-[#8a8177]">
-                      Γράψε το όνομα ή τον κωδικό του BOX NOW locker που
-                      επέλεξες.
+                      Γράψε το όνομα ή τον κωδικό του BOX NOW locker που επέλεξες.
                     </p>
                   </div>
 
                   <div>
-                    <label className="mb-2 block text-xs">
-                      Σημειώσεις
-                    </label>
-
+                    <label className="mb-2 block text-xs">Σημειώσεις</label>
                     <textarea
                       className="input-field min-h-28 resize-y"
                       value={customer.notes}
-                      onChange={(event) =>
-                        setCustomer({
-                          ...customer,
-                          notes: event.target.value,
-                        })
-                      }
+                      onChange={(event) => setCustomer({ ...customer, notes: event.target.value })}
                       placeholder="Κάτι που θέλεις να μας πεις..."
                     />
                   </div>
@@ -925,51 +724,33 @@ export default function Home() {
                     type="submit"
                     className="w-full rounded-full bg-[#292722] py-4 text-xs text-white disabled:opacity-50"
                   >
-                    {sending
-                      ? "Αποστολή..."
-                      : "Αποστολή παραγγελίας"}
+                    {sending ? "Αποστολή..." : "Αποστολή παραγγελίας"}
                   </button>
 
                   <p className="text-center text-[11px] leading-5 text-[#8a8177]">
-                    Θα λάβεις email επιβεβαίωσης και εμείς θα λάβουμε την
-                    παραγγελία.
+                    Θα λάβεις email επιβεβαίωσης και εμείς θα λάβουμε την παραγγελία.
                   </p>
                 </form>
               </div>
 
               <div className="bg-[#e8ded2] p-7 md:p-10">
-                <p className="text-[10px] uppercase tracking-[.3em] text-[#766b60]">
-                  Order summary
-                </p>
+                <p className="text-[10px] uppercase tracking-[.3em] text-[#766b60]">Order summary</p>
 
                 <div className="mt-6 space-y-4">
                   {groupedCart.map(({ product, quantity }) => (
-                    <div
-                      key={product.id}
-                      className="flex items-center justify-between gap-4 border-b border-black/10 pb-4"
-                    >
+                    <div key={product.id} className="flex items-center justify-between gap-4 border-b border-black/10 pb-4">
                       <div>
-                        <div className="text-sm">
-                          {product.name} × {quantity}
-                        </div>
-
-                        <div className="mt-1 text-xs text-[#746f66]">
-                          {product.category}
-                        </div>
+                        <div className="text-sm">{product.name} × {quantity}</div>
+                        <div className="mt-1 text-xs text-[#746f66]">{product.category}</div>
                       </div>
-
-                      <div className="text-sm">
-                        {(product.price * quantity).toFixed(2)}€
-                      </div>
+                      <div className="text-sm">{(product.price * quantity).toFixed(2)}€</div>
                     </div>
                   ))}
                 </div>
 
                 <div className="mt-8 flex items-center justify-between border-t border-black/10 pt-5">
                   <span className="text-sm">Σύνολο προϊόντων</span>
-                  <strong className="text-lg">
-                    {total.toFixed(2)}€
-                  </strong>
+                  <strong className="text-lg">{total.toFixed(2)}€</strong>
                 </div>
 
                 <div className="mt-2 flex items-center justify-between text-sm">
@@ -978,8 +759,7 @@ export default function Home() {
                 </div>
 
                 <div className="mt-6 rounded-2xl bg-white/50 p-4 text-xs leading-5 text-[#6e675f]">
-                  Η παραγγελία αποστέλλεται χωρίς online πληρωμή. Θα
-                  επικοινωνήσουμε μαζί σου για την ολοκλήρωση.
+                  Η παραγγελία αποστέλλεται χωρίς online πληρωμή. Θα επικοινωνήσουμε μαζί σου για την ολοκλήρωση.
                 </div>
               </div>
             </div>
