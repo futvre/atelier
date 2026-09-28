@@ -1,14 +1,22 @@
 # ZOE ATELIER
 
-Premium single-page storefront prototype for Vercel.
+Next.js + Tailwind storefront prototype for Vercel.
+
+## Checkout
+This version intentionally does NOT use Stripe.
+Customers fill in the checkout form and the site creates a pre-filled order email containing:
+- Customer name
+- Phone
+- Email
+- BOX NOW locker / area
+- Products and quantities
+- Total
+- Notes
+
+Set the Vercel environment variable:
+`NEXT_PUBLIC_ORDER_EMAIL=your@email.com`
+
+The customer's email client opens with the order ready to send.
 
 ## Deploy
-1. Create a GitHub repository named `zoe-atelier`.
-2. Upload the contents of this folder to the repository root.
-3. In Vercel choose **Add New → Project** and import the GitHub repository.
-4. Vercel should detect Next.js automatically.
-5. Deploy.
-
-The current product visuals are CSS-generated placeholders, so no image files are required yet.
-
-Checkout is visual-only for now; connect Stripe/Viva/PayPal later.
+Push the repository to GitHub and import it into Vercel. Keep the framework as Next.js.
