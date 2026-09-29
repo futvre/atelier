@@ -93,8 +93,8 @@ export const products: Product[] = [
 ];
 
 export const categories = [
-  { name: "Βάζα", image: "/products/category-vases.webp", subtitle: "Sculptural forms" },
-  { name: "Κηροπήγια", image: "/products/category-candles.webp", subtitle: "Light & shadow" },
-  { name: "Wall Art", image: "/products/category-wall-art.webp", subtitle: "Texture on the wall" },
-  { name: "Μπολ", image: "/products/category-bowls.webp", subtitle: "Quiet utility" }
+  { name: "Βάζα", image: "/products/category-vases.jfif", subtitle: "Sculptural forms" },
+  { name: "Κηροπήγια", image: "/products/category-candles.jfif", subtitle: "Light & shadow" },
+  { name: "Wall Art", image: "/products/category-wall-art.jfif", subtitle: "Texture on the wall" },
+  { name: "Μπολ", image: "/products/category-bowls.jfif", subtitle: "Quiet utility" }
 ];
