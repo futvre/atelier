@@ -408,7 +408,7 @@ export default function Home() {
         <div className="mx-auto grid max-w-7xl items-center gap-16 md:grid-cols-2">
           <div className="relative mx-auto aspect-square w-full max-w-[520px] overflow-hidden rounded-[38px] bg-[#cbb9a6] soft-shadow">
             <Image
-              src="/products/1.jfif"
+              src="/products/story.png"
               alt="ZOE ATELIER story"
               fill
               sizes="(max-width: 768px) 100vw, 50vw"
