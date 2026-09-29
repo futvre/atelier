@@ -255,7 +255,7 @@ export default function Home() {
 
       <section className="relative flex min-h-[92vh] items-end overflow-hidden px-5 pb-12 pt-28 md:min-h-screen md:px-10 md:pb-16">
         <Image
-          src="/products/hero.jfif"
+          src="/products/hero.png"
           alt="ZOE ATELIER"
           fill
           priority
