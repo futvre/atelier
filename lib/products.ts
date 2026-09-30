@@ -25,7 +25,7 @@ export const products: Product[] = [
     name: "Arc Candle",
     category: "Κηροπήγια",
     price: 19,
-    image: "/products/arc-candle.webp",
+    image: "/products/arc.webp",
     tone: "#c8b6a2",
     shape: "arc",
     description: "Μίνιμαλ κηροπήγιο με καθαρή καμπύλη και διακριτική γλυπτική παρουσία."
@@ -33,9 +33,9 @@ export const products: Product[] = [
   {
     id: 3,
     name: "Relief No. 02",
-    category: "Wall Art",
+    category: "Κηροπήγια",
     price: 42,
-    image: "/products/relief-02.webp",
+    image: "/products/hollow arc.webp",
     tone: "#e1d9cf",
     shape: "relief",
     description: "Επιτοίχιο relief για χώρους που θέλουν υφή και αρχιτεκτονική απλότητα."
@@ -45,7 +45,7 @@ export const products: Product[] = [
     name: "Pebble Bowl",
     category: "Μπολ",
     price: 31,
-    image: "/products/pebble-bowl.webp",
+    image: "/products/rings.webp",
     tone: "#cfc0ae",
     shape: "bowl",
     description: "Γλυπτικό μπολ εμπνευσμένο από λείες, φυσικές πέτρες."
@@ -55,7 +55,7 @@ export const products: Product[] = [
     name: "Sculpt No. 02",
     category: "Βάζα",
     price: 34,
-    image: "/products/sculpt-02.webp",
+    image: "/products/candles.jpeg",
     tone: "#bba792",
     shape: "tall",
     description: "Ψηλό, ήσυχο statement vase για κονσόλες, ράφια και γωνίες."
@@ -65,7 +65,7 @@ export const products: Product[] = [
     name: "Twin Arc",
     category: "Κηροπήγια",
     price: 24,
-    image: "/products/twin-arc.webp",
+    image: "/products/3vases.webp",
     tone: "#ddd1c2",
     shape: "twin",
     description: "Ζευγάρι καμπύλων κηροπηγίων με γλυπτική συμμετρία."
@@ -75,7 +75,7 @@ export const products: Product[] = [
     name: "Relief No. 03",
     category: "Wall Art",
     price: 46,
-    image: "/products/relief-03.webp",
+    image: "/products/heartvase.webp",
     tone: "#d0c5b8",
     shape: "waves",
     description: "Ανάγλυφη σύνθεση με κυματιστές φόρμες και απαλή υφή."
@@ -85,7 +85,7 @@ export const products: Product[] = [
     name: "Stone Tray",
     category: "Μπολ",
     price: 27,
-    image: "/products/stone-tray.webp",
+    image: "/products/ripplevase.jpg",
     tone: "#bfae9c",
     shape: "tray",
     description: "Minimal δίσκος για κλειδιά, κεριά, κοσμήματα και μικρά αντικείμενα."
