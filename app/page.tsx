@@ -439,7 +439,7 @@ export default function Home() {
       <section id="future" className="relative overflow-hidden bg-[#292722] px-5 py-24 text-[#f5f1ea] md:px-10 md:py-36">
         <div className="absolute -right-20 -top-20 h-80 w-80 rounded-full bg-[#756452] opacity-30 blur-3xl" />
         <div className="relative mx-auto max-w-7xl">
-          <p className="mb-5 text-[10px] uppercase tracking-[.35em] text-[#b9aa99]">Coming next</p>
+          <p className="mb-5 text-[10px] uppercase tracking-[.35em] text-[#b9aa99]">ΠΡΟΣΕΧΩΣ</p>
           <h2 className="text-5xl font-light tracking-[-.04em] md:text-8xl">
             Made layer
             <br />
