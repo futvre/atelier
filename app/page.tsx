@@ -309,7 +309,7 @@ export default function Home() {
       <section id="collections" className="mx-auto max-w-7xl px-5 py-20 md:px-8 md:py-28">
         <div className="mb-10">
           <p className="mb-3 text-[10px] uppercase tracking-[.35em] text-[#8a8177]">ΚΑΤΗΓΟΡΙΕΣ</p>
-          <h2 className="text-4xl font-light tracking-[-.03em] md:text-6xl">Δώστε μορφή στον χώρο σας.</h2>
+          <h3 className="text-4xl font-light tracking-[-.03em] md:text-6xl">Δώστε μορφή στον χώρο σας.</h3>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">
