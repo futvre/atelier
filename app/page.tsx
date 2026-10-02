@@ -225,10 +225,10 @@ export default function Home() {
           </a>
 
           <nav className="hidden gap-8 text-[11px] uppercase tracking-[.18em] md:flex">
-            <a href="#shop" className="transition hover:opacity-50">Shop</a>
-            <a href="#collections" className="transition hover:opacity-50">Collections</a>
-            <a href="#story" className="transition hover:opacity-50">Our story</a>
-            <a href="#future" className="transition hover:opacity-50">3D studio</a>
+            <a href="#shop" className="transition hover:opacity-50">Έργα</a>
+            <a href="#collections" className="transition hover:opacity-50">Κατηγορίες</a>
+            <a href="#story" className="transition hover:opacity-50">Η Φιλοσοφία</a>
+            <a href="#future" className="transition hover:opacity-50">3D Εργαστήριο</a>
           </nav>
 
           <button onClick={openCart} className="relative" aria-label="Shopping bag">
@@ -546,7 +546,7 @@ export default function Home() {
       >
         <aside className="absolute right-0 top-0 h-full w-full max-w-md overflow-y-auto bg-[#f5f1ea] p-6 shadow-2xl">
           <div className="flex items-center justify-between">
-            <h3 className="text-xl font-light">Your bag</h3>
+            <h3 className="text-xl font-light">Καλάθι</h3>
             <button onClick={closeCart} aria-label="Close cart"><X /></button>
           </div>
 
