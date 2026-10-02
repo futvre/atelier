@@ -244,10 +244,10 @@ export default function Home() {
         {menuOpen && (
           <div className="border-t border-black/10 bg-[#f5f1ea] px-6 py-6 md:hidden">
             <div className="grid gap-5 text-sm">
-              <a onClick={() => setMenuOpen(false)} href="#shop">Shop</a>
-              <a onClick={() => setMenuOpen(false)} href="#collections">Collections</a>
-              <a onClick={() => setMenuOpen(false)} href="#story">Our story</a>
-              <a onClick={() => setMenuOpen(false)} href="#future">3D studio</a>
+              <a onClick={() => setMenuOpen(false)} href="#shop">Έργα</a>
+              <a onClick={() => setMenuOpen(false)} href="#collections">Κατηγορίες</a>
+              <a onClick={() => setMenuOpen(false)} href="#story">Η Φιλοσοφία</a>
+              <a onClick={() => setMenuOpen(false)} href="#future">3D Εργαστήριο</a>
             </div>
           </div>
         )}
