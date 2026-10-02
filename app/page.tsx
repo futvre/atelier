@@ -308,8 +308,8 @@ export default function Home() {
 
       <section id="collections" className="mx-auto max-w-7xl px-5 py-20 md:px-8 md:py-28">
         <div className="mb-10">
-          <p className="mb-3 text-[10px] uppercase tracking-[.35em] text-[#8a8177]">Collections</p>
-          <h2 className="text-4xl font-light tracking-[-.03em] md:text-6xl">Find your form.</h2>
+          <p className="mb-3 text-[10px] uppercase tracking-[.35em] text-[#8a8177]">ΚΑΤΗΓΟΡΙΕΣ</p>
+          <h2 className="text-4xl font-light tracking-[-.03em] md:text-6xl">Δώστε μορφή στον χώρο σας.</h2>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">
@@ -340,8 +340,8 @@ export default function Home() {
       <section id="shop" className="mx-auto max-w-7xl px-5 pb-20 md:px-8 md:pb-28">
         <div className="mb-10 flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <div>
-            <p className="mb-3 text-[10px] uppercase tracking-[.35em] text-[#8a8177]">The collection</p>
-            <h2 className="text-4xl font-light tracking-[-.03em] md:text-6xl">Made for your space.</h2>
+            <p className="mb-3 text-[10px] uppercase tracking-[.35em] text-[#8a8177]">ΤΑ ΕΡΓΑ ΜΑΣ</p>
+            <h2 className="text-4xl font-light tracking-[-.03em] md:text-6xl">Σχεδιασμένα για τον χώρο σας.</h2>
           </div>
 
           <div className="flex gap-2 overflow-x-auto pb-1 text-xs">
