@@ -419,9 +419,9 @@ export default function Home() {
           <div className="max-w-xl">
             <p className="mb-5 text-[10px] uppercase tracking-[.35em] text-[#766b60]">The atelier</p>
             <h2 className="text-4xl font-light leading-tight tracking-[-.03em] md:text-6xl">
-              Quiet objects.
+              Ήρεμες φόρμες.
               <br />
-              <i className="font-serif">Strong presence.</i>
+              <i className="font-serif">Έντονη παρουσία.</i>
             </h2>
             <p className="mt-7 text-sm leading-7 text-[#61594f] md:text-base">
               Το ZOE ATELIER γεννήθηκε από την αγάπη για τις απλές φόρμες, τις φυσικές υφές και τα αντικείμενα που δεν χρειάζονται φωνή για να τραβήξουν την προσοχή.
